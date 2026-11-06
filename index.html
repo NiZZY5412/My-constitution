@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Legal Oracle | Kenya Constitution</title>
+  <meta name="description" content="AI Constitutional Legal Assistant for Advocates, Law Firms, and Practitioners in Kenya. Exact Article and Clause citations with M-Pesa billing.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            oracle: {
+              pink: '#ec4899',
+              blue: '#2563eb',
+              purple: '#7c3aed',
+              red: '#dc2626',
+              violet: '#6d28d9',
+              emerald: '#059669',
+              gold: '#d97706',
+              dark: '#0b0f19'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Inter and Cinzel for Kenyan Legal Heraldry -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Custom Design System Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-[#0b0f19] text-gray-100 flex flex-col min-h-screen relative selection:bg-purple-600 selection:text-white">
+
+  <!-- Aurora Backdrop Lighting Effect -->
+  <div class="aurora-bg">
+    <div class="aurora-blob-1"></div>
+    <div class="aurora-blob-2"></div>
+    <div class="aurora-blob-3"></div>
+    <div class="aurora-blob-4"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm"></div>
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 border-b border-white/10 glass-panel">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="AppModule.switchTab('chat')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 p-[1.5px] shadow-lg shadow-purple-900/30">
+          <div class="w-full h-full bg-[#0d121f] rounded-[10px] flex items-center justify-center">
+            <span class="text-xl">⚖️</span>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-base tracking-tight text-white font-['Cinzel']">LEGAL ORACLE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center gap-1 bg-gray-900/80 p-1 rounded-xl border border-white/5 text-xs font-semibold">
+        <button id="nav-btn-chat" class="px-3.5 py-1.5 rounded-lg transition-all nav-pill-active text-white flex items-center gap-1.5">
+          <span>💬</span>
+          <span>AI Oracle</span>
+        </button>
+        <button id="nav-btn-browser" class="px-3.5 py-1.5 rounded-lg transition-all text-gray-400 hover:text-white flex items-center gap-1.5">
+          <span>📜</span>
+          <span>Constitution</span>
+        </button>
+        <button id="nav-btn-pricing" class="px-3.5 py-1.5 rounded-lg transition-all text-gray-400 hover:text-white flex items-center gap-1.5">
+          <span>💳</span>
+          <span>Plans</span>
+        </button>
+        <a id="nav-btn-admin" href="/admin.html" class="px-3.5 py-1.5 rounded-lg transition-all text-amber-300 hover:text-white flex items-center gap-1.5 hidden border border-amber-500/30">
+          <span>🛡️</span>
+          <span>Admin</span>
+        </a>
+      </nav>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-3">
+        
+        <button id="header-auth-btn" class="flex items-center gap-2 p-1.5 rounded-xl bg-gray-900/80 hover:bg-gray-800 border border-white/10 transition">
+          <div id="header-user-avatar" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white bg-gradient-to-br from-blue-600 to-indigo-600">
+            ↪
+          </div>
+          <div class="hidden sm:block text-left pr-2">
+            <div id="header-user-name" class="text-xs font-bold text-white truncate max-w-[120px]">Sign in</div>
+            <div id="header-user-role" class="text-[10px] text-purple-400 truncate max-w-[120px]"></div>
+          </div>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <div id="account-status-banner" role="status" class="hidden border-b border-red-500/30 bg-red-950/40 px-5 py-3 text-center text-sm text-red-200">
+    Your account is suspended. You can sign in, but chat, billing, and other account features are unavailable. Contact support.
+  </div>
+
+  <!-- Main View Container -->
+  <main class="flex-1 flex overflow-hidden relative z-10 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- ========================================== -->
+    <!-- 1. VIEW: AI CONSTITUTIONAL CHAT ORACLE    -->
+    <!-- ========================================== -->
+    <div id="view-chat" class="w-full flex gap-6 h-[calc(100vh-10rem)]">
+      
+      <!-- Conversation History Sidebar -->
+      <aside class="hidden md:flex flex-col w-72 glass-panel rounded-2xl border border-white/10 p-4">
+        
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400">Past Consultations</h2>
+          <button id="btn-new-chat" class="btn-oracle text-xs py-1 px-2.5 rounded-lg flex items-center gap-1 shadow-sm">
+            <span>+</span>
+            <span>New Query</span>
+          </button>
+        </div>
+
+        <!-- Search past chats -->
+        <div class="relative mb-3">
+          <input type="text" placeholder="Search conversations..." class="w-full bg-gray-900/90 border border-gray-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-gray-300 placeholder-gray-500 focus:outline-none focus:border-purple-500">
+          <svg class="w-3.5 h-3.5 absolute left-2.5 top-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+
+        <!-- Chat History List -->
+        <div id="conversation-history-list" class="flex-1 overflow-y-auto space-y-1 pr-1">
+          <!-- Populated dynamically by chat.js -->
+        </div>
+
+        <!-- Quick Constitutional Help Pill -->
+        <div class="mt-4 pt-3 border-t border-gray-800 text-[11px] text-gray-400">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-semibold text-gray-300">Grounding Source:</span>
+            <span class="text-emerald-400 font-mono text-[10px]">Kenya Law 2010</span>
+          </div>
+          <p class="text-gray-500 leading-tight">Answers cite Article, Clause & Chapter exclusively.</p>
+        </div>
+
+      </aside>
+
+      <!-- Main Chat Area -->
+      <section class="flex-1 flex flex-col glass-panel rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+        
+        <!-- Permanent Legal Disclaimer Banner (Product Requirement Section 4.1) -->
+        <div class="bg-gradient-to-r from-red-950/60 via-purple-950/40 to-blue-950/60 border-b border-red-500/20 px-4 py-2 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-red-400 font-bold text-sm">⚖️</span>
+            <span class="text-gray-300 font-medium">
+              For information only. Not legal advice.
+            </span>
+          </div>
+        </div>
+
+        <!-- Chat Message Thread -->
+        <div id="chat-thread" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+          <!-- Dynamic conversation populated by chat.js -->
+        </div>
+
+        <!-- Starter Prompt Chips -->
+        <div class="px-4 py-2 border-t border-white/5 bg-gray-950/40 flex items-center gap-2 overflow-x-auto text-xs">
+          <button onclick="ChatModule.handleSendPrompt('Article 47')" class="px-3 py-1 rounded-full bg-purple-900/30 hover:bg-purple-800/50 text-purple-300 border border-purple-700/40 whitespace-nowrap transition">
+            Article 47
+          </button>
+          <button onclick="ChatModule.handleSendPrompt('Article 27')" class="px-3 py-1 rounded-full bg-pink-900/30 hover:bg-pink-800/50 text-pink-300 border border-pink-700/40 whitespace-nowrap transition">
+            Article 27
+          </button>
+          <button onclick="ChatModule.handleSendPrompt('Article 49')" class="px-3 py-1 rounded-full bg-blue-900/30 hover:bg-blue-800/50 text-blue-300 border border-blue-700/40 whitespace-nowrap transition">
+            Article 49
+          </button>
+        </div>
+
+        <!-- Chat Input Form -->
+        <div class="p-4 border-t border-white/10 bg-gray-900/90">
+          <div class="relative flex items-center">
+            <textarea id="chat-input" rows="2" placeholder="Ask about the Constitution" class="w-full bg-[#0d121f] text-gray-100 placeholder-gray-500 rounded-xl pl-4 pr-32 py-3 text-sm border border-purple-500/30 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-500 resize-none"></textarea>
+            
+            <div class="absolute right-3 flex items-center gap-2">
+              <button id="btn-send-chat" class="btn-oracle text-xs py-2 px-4 shadow-md font-bold">
+                <span>Ask</span>
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-gray-500 mt-2 px-1">
+            <span>Enter to send</span>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. VIEW: CONSTITUTION EXPLORER & BROWSER   -->
+    <!-- ========================================== -->
+    <div id="view-browser" class="w-full hidden flex flex-col gap-6 h-[calc(100vh-10rem)]">
+      
+      <!-- Explorer Header & Filter Bar -->
+      <div class="glass-panel p-5 rounded-2xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-extrabold text-white font-['Cinzel'] flex items-center gap-2">
+            <span>📜</span>
+            <span>Constitution of Kenya (2010) Official Reader</span>
+          </h2>
+          <p id="browser-results-count" class="text-xs text-gray-400">Showing all 18 Chapters and 6 Schedules</p>
+        </div>
+
+        <div class="flex items-center gap-3 w-full md:w-auto">
+          <!-- Live Search -->
+          <div class="relative flex-1 md:w-64">
+            <input id="browser-search-input" type="text" placeholder="Search Article, title, or keywords..." class="w-full bg-gray-900/90 border border-gray-700 rounded-xl pl-9 pr-3 py-2 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-purple-500">
+            <svg class="w-4 h-4 absolute left-3 top-2.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+
+          <!-- Chapter Filter Dropdown -->
+          <select id="browser-chapter-select" class="bg-gray-900/90 text-xs font-semibold text-gray-200 border border-gray-700 rounded-xl px-3 py-2 focus:outline-none focus:border-purple-500 cursor-pointer">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Articles Grid -->
+      <div id="browser-articles-grid" class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pr-1">
+        <!-- Rendered by constitution_browser.js -->
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. VIEW: PRICING & M-PESA BILLING          -->
+    <!-- ========================================== -->
+    <div id="view-pricing" class="w-full hidden overflow-y-auto h-[calc(100vh-10rem)] pr-2">
+      
+      <div class="text-center max-w-3xl mx-auto mb-10 pt-4">
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-950 text-purple-300 border border-purple-800 uppercase tracking-widest">
+          Transparent Kenyan Pricing (KES)
+        </span>
+        <h2 class="text-3xl font-extrabold text-white mt-3 font-['Cinzel']">Equip Your Practice with Constitutional Mastery</h2>
+        <p class="text-sm text-gray-400 mt-2">
+          Paid plans use M-Pesa checkout when provider credentials are configured. A plan activates only after payment verification.
+        </p>
+      </div>
+
+      <!-- Pricing Plans Grid (Rendered by billing.js) -->
+      <div id="pricing-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"></div>
+
+      <!-- Daraja & Payment Guarantees -->
+      <div class="glass-panel p-6 rounded-2xl border border-white/10 max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 text-center text-xs">
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-emerald-950 text-emerald-400 flex items-center justify-center text-lg mb-2 border border-emerald-800">
+            📱
+          </div>
+          <h4 class="font-bold text-white text-sm">M-Pesa checkout</h4>
+          <p class="text-gray-400 mt-1">A plan activates only after the payment status is verified by the backend.</p>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-blue-950 text-blue-400 flex items-center justify-center text-lg mb-2 border border-blue-800">
+            🧾
+          </div>
+          <h4 class="font-bold text-white text-sm">Payment confirmation</h4>
+          <p class="text-gray-400 mt-1">Verified M-Pesa receipt reference; not a KRA eTIMS tax invoice.</p>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-purple-950 text-purple-400 flex items-center justify-center text-lg mb-2 border border-purple-800">
+            🔒
+          </div>
+          <h4 class="font-bold text-white text-sm">Advocate Client Privilege</h4>
+          <p class="text-gray-400 mt-1">Zero data used for LLM retraining. Strict confidentiality under Kenya Data Protection Act 2019.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 4. VIEW: FIRM TEAM SEATS                   -->
+    <!-- ========================================== -->
+    <div id="view-seats" class="w-full hidden overflow-y-auto h-[calc(100vh-10rem)] pr-2">
+      
+      <div class="glass-panel p-6 rounded-2xl border border-white/10 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-white font-['Cinzel'] flex items-center gap-2">
+            <span>🏢</span>
+            <span>Law Firm Multi-User Seat Management</span>
+          </h2>
+          <p class="text-xs text-gray-400 mt-1">Pool your constitutional research queries across partners, senior associates, and pupils.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span id="firm-seats-count" class="px-3 py-1 rounded-full bg-purple-900/60 text-purple-300 text-xs font-bold border border-purple-700">
+            4 / 5 Seats Allocated
+          </span>
+          <button onclick="BillingModule.openBillingModal('plan_firm_business')" class="btn-oracle text-xs py-1.5 px-3">
+            Add More Seats
+          </button>
+        </div>
+      </div>
+
+      <!-- Invite Member Box -->
+      <div class="glass-card p-5 rounded-2xl border border-gray-800 mb-6">
+        <h3 class="text-sm font-bold text-white mb-3">Invite Advocate to Firm Quota</h3>
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+          <input id="invite-seat-email" type="email" placeholder="colleague@lawfirm.co.ke" class="flex-1 bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-purple-500 w-full sm:w-auto">
+          <select id="invite-seat-role" class="bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-purple-500 cursor-pointer w-full sm:w-auto">
+            <option value="Senior Associate">Senior Associate</option>
+            <option value="Associate Advocate">Associate Advocate</option>
+            <option value="Pupil / Researcher">Pupil / Researcher</option>
+            <option value="Partner (Admin)">Partner (Admin)</option>
+          </select>
+          <button onclick="BillingModule.inviteFirmSeat()" class="btn-mpesa text-xs py-2 px-4 w-full sm:w-auto font-bold">
+            Send Seat Invite
+          </button>
+        </div>
+      </div>
+
+      <!-- Seats Table -->
+      <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+        <div class="p-4 border-b border-gray-800">
+          <h3 class="text-sm font-bold text-white">Active Firm Seats & Quota Utilization</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-gray-900/80 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-800">
+              <tr>
+                <th class="py-3 px-4">Advocate Name</th>
+                <th class="py-3 px-4">Email</th>
+                <th class="py-3 px-4">Role in Firm</th>
+                <th class="py-3 px-4">Questions Used</th>
+                <th class="py-3 px-4">Status</th>
+              </tr>
+            </thead>
+            <tbody id="firm-seats-table-body">
+              <!-- Rendered by billing.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 5. VIEW: HELPDESK & SUPPORT                -->
+    <!-- ========================================== -->
+    <div id="view-helpdesk" class="w-full hidden overflow-y-auto h-[calc(100vh-10rem)] pr-2">
+      
+      <div class="max-w-2xl mx-auto glass-panel p-6 sm:p-8 rounded-2xl border border-white/10">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-purple-900/60 text-purple-300 flex items-center justify-center text-xl border border-purple-700">
+            🎧
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-white font-['Cinzel']">Advocate Support & Legal Review</h2>
+            <p class="text-xs text-gray-400">Submit a constitutional query review, billing question, or technical issue.</p>
+          </div>
+        </div>
+
+        <form onsubmit="AppModule.submitSupportTicket(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-1">Subject</label>
+            <input id="support-subject" type="text" placeholder="e.g. Discrepancy in Article 140 presidential election timeline" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-300 mb-1">Category</label>
+              <select id="support-category" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-purple-500 cursor-pointer">
+                <option value="Constitutional Accuracy">Constitutional Accuracy / Citation Query</option>
+                <option value="M-Pesa Billing">M-Pesa Billing / eTIMS Receipt</option>
+                <option value="Firm Seats">Law Firm Seats / Pooling</option>
+                <option value="Technical">API / Performance / Latency</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-300 mb-1">Priority</label>
+              <select id="support-priority" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-purple-500 cursor-pointer">
+                <option value="Normal">Normal (24h SLA)</option>
+                <option value="High">High (Court Hearing Impending - 4h SLA)</option>
+                <option value="Low">Low (General Inquiry)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-1">Detailed Explanation</label>
+            <textarea id="support-body" rows="4" placeholder="Provide complete facts, relevant Article numbers, or error details..." required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 resize-none"></textarea>
+          </div>
+
+          <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800 text-[11px] text-gray-400">
+            <span>Advocates with an active Pro or Firm subscription receive priority escalation by Kenyan practising advocate review leads.</span>
+          </div>
+
+          <button type="submit" class="w-full btn-oracle py-2.5 rounded-xl font-bold text-xs shadow-lg">
+            Submit Support Ticket
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 6. VIEW: ADMIN & GOVERNANCE PORTAL         -->
+    <!-- ========================================== -->
+    <div id="view-admin" class="w-full hidden overflow-y-auto h-[calc(100vh-10rem)] pr-2 space-y-6">
+      
+      <!-- Admin Top Bar -->
+      <div class="glass-panel p-5 rounded-2xl border border-amber-500/30 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-amber-400 font-bold text-base">🛡️</span>
+            <h2 class="text-lg font-bold text-white font-['Cinzel']">Executive Governance & Administrative Console</h2>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800">2FA Verified</span>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">Multi-tenant telemetry, Safaricom Daraja ledger, maker-checker payouts, and pgvector knowledge management.</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="AdminModule.exportTransactionsCSV()" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-gray-200 border border-gray-700 flex items-center gap-1.5 transition">
+            <span>📥</span>
+            <span>Export Financials (CSV)</span>
+          </button>
+          <button id="btn-reindex-kb" onclick="AdminModule.triggerReindexKnowledgeBase()" class="btn-violet text-xs py-1.5 px-3 flex items-center gap-1.5">
+            <span>⚡</span>
+            <span>Re-index Vector DB</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Super Admin KPI Metrics -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="glass-card p-4 rounded-2xl border border-gray-800">
+          <span class="text-[11px] font-semibold text-gray-400 uppercase">Total Users</span>
+          <div id="admin-metric-users" class="text-2xl font-extrabold text-white mt-1">1,482</div>
+          <span class="text-[10px] text-emerald-400 font-semibold">+18% this month</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-gray-800">
+          <span class="text-[11px] font-semibold text-gray-400 uppercase">Monthly Revenue (MRR)</span>
+          <div id="admin-metric-mrr" class="text-2xl font-extrabold text-purple-400 mt-1">KES 846,000</div>
+          <span class="text-[10px] text-purple-300 font-semibold">328 Active Subscriptions</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-gray-800">
+          <span class="text-[11px] font-semibold text-gray-400 uppercase">AI Gross Margin</span>
+          <div id="admin-metric-margin" class="text-2xl font-extrabold text-emerald-400 mt-1">81.6%</div>
+          <span class="text-[10px] text-gray-400">Token Cost vs Revenue</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-gray-800">
+          <span class="text-[11px] font-semibold text-gray-400 uppercase">M-Pesa STK Success</span>
+          <div id="admin-metric-mpesa" class="text-2xl font-extrabold text-blue-400 mt-1">98.7%</div>
+          <span class="text-[10px] text-blue-300 font-semibold">Daraja Online Gateway</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-amber-900/40">
+          <span class="text-[11px] font-semibold text-amber-300 uppercase">Settled Wallet Balance</span>
+          <div id="admin-metric-balance" class="text-2xl font-extrabold text-amber-400 mt-1">KES 428,500</div>
+          <span class="text-[10px] text-gray-400">Available for Payout</span>
+        </div>
+      </div>
+
+      <!-- Maker-Checker Payout Disbursement Card -->
+      <div class="glass-panel p-5 rounded-2xl border border-white/10">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <span>💸</span>
+              <span>Maker-Checker Funds Disbursement (Daraja B2C / Bank PesaLink)</span>
+            </h3>
+            <p class="text-xs text-gray-400">Dual-control security: Requires two admin keys and OTP confirmation above KES 50,000.</p>
+          </div>
+          <span class="text-xs font-mono px-2 py-0.5 rounded bg-gray-900 text-gray-300 border border-gray-800">Daily Cap: KES 250,000</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-gray-400 mb-1">Disbursement Amount (KES)</label>
+            <input id="payout-amount-input" type="number" placeholder="50000" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-gray-400 mb-1">Destination Type</label>
+            <select id="payout-destination-select" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-purple-500">
+              <option value="M-Pesa B2C (Business to Customer)">Safaricom M-Pesa B2C Shortcode</option>
+              <option value="Bank Account (PesaLink / RTGS)">Bank Corporate Account (PesaLink)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-gray-400 mb-1">Beneficiary Mobile / A/C</label>
+            <input id="payout-phone-input" type="text" placeholder="254722000111" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+          </div>
+          <div class="flex items-end">
+            <button onclick="AdminModule.initiateMakerCheckerPayout()" class="w-full btn-mpesa py-2 text-xs font-bold rounded-xl">
+              Initiate B2C Payout
+            </button>
+          </div>
+        </div>
+
+        <!-- Payout History Table -->
+        <div class="mt-4 pt-4 border-t border-gray-800">
+          <h4 class="text-xs font-bold text-gray-300 mb-2">Disbursement Audit Trail</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead class="bg-gray-900/60 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                <tr>
+                  <th class="py-2 px-3">Payout ID</th>
+                  <th class="py-2 px-3">Amount</th>
+                  <th class="py-2 px-3">Destination Type</th>
+                  <th class="py-2 px-3">Beneficiary</th>
+                  <th class="py-2 px-3">Maker (Initiator)</th>
+                  <th class="py-2 px-3">Checker (Approver)</th>
+                  <th class="py-2 px-3">Status</th>
+                </tr>
+              </thead>
+              <tbody id="admin-payouts-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Management Table -->
+      <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+        <div class="p-4 border-b border-gray-800 flex items-center justify-between">
+          <h3 class="text-sm font-bold text-white">Registered Advocates & Firm Accounts</h3>
+          <span class="text-xs text-gray-400">Server-Side Quota Enforcement</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-gray-900/80 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-800">
+              <tr>
+                <th class="py-3 px-4">User</th>
+                <th class="py-3 px-4">Firm / Chambers</th>
+                <th class="py-3 px-4">Active Plan</th>
+                <th class="py-3 px-4">Usage Meter</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4">Administrative Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-table-body">
+              <!-- Rendered by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Transactions & Daraja Payments Table -->
+      <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+        <div class="p-4 border-b border-gray-800 flex items-center justify-between">
+          <h3 class="text-sm font-bold text-white">Safaricom Daraja & Gateway Inbound Payments</h3>
+          <span class="text-xs text-emerald-400 font-mono">Webhook Verified</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-gray-900/80 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-800">
+              <tr>
+                <th class="py-3 px-4">M-Pesa Receipt</th>
+                <th class="py-3 px-4">Advocate</th>
+                <th class="py-3 px-4">Phone</th>
+                <th class="py-3 px-4">Plan</th>
+                <th class="py-3 px-4">Amount (KES)</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4">Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="admin-transactions-table-body">
+              <!-- Rendered by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Help Desk Tickets Queue -->
+      <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+        <div class="p-4 border-b border-gray-800">
+          <h3 class="text-sm font-bold text-white">Help Desk & Advocate Queries Queue</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-gray-900/80 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-800">
+              <tr>
+                <th class="py-3 px-4">Ticket</th>
+                <th class="py-3 px-4">Advocate</th>
+                <th class="py-3 px-4">Subject</th>
+                <th class="py-3 px-4">Priority</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4">Time</th>
+                <th class="py-3 px-4">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-tickets-table-body">
+              <!-- Rendered by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Immutable Audit Logs -->
+      <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+        <div class="p-4 border-b border-gray-800 flex items-center justify-between">
+          <h3 class="text-sm font-bold text-white font-mono">Immutable Compliance Audit Log</h3>
+          <span class="text-xs text-gray-500 font-mono">Hash-chained</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-gray-900/80 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-800">
+              <tr>
+                <th class="py-2.5 px-3">Timestamp</th>
+                <th class="py-2.5 px-3">Actor</th>
+                <th class="py-2.5 px-3">Action Description</th>
+                <th class="py-2.5 px-3">Target Entity</th>
+                <th class="py-2.5 px-3">Origin IP</th>
+              </tr>
+            </thead>
+            <tbody id="admin-audit-table-body">
+              <!-- Rendered by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL: AUTHENTICATION (LOGIN & SIGN UP)    -->
+  <!-- ========================================== -->
+  <div id="auth-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md rounded-3xl border border-white/15 p-6 modal-enter shadow-2xl relative">
+      
+      <button onclick="AppModule.closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-1 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+
+      <!-- Logo & Modal Header -->
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 p-[1.5px] mx-auto mb-2 shadow-lg">
+          <div class="w-full h-full bg-[#0d121f] rounded-[14px] flex items-center justify-center text-2xl">
+            ⚖️
+          </div>
+        </div>
+        <h3 class="text-xl font-bold text-white font-['Cinzel']">Kenya Legal Oracle AI</h3>
+      </div>
+
+      <!-- Auth Tabs: Sign In vs Register -->
+      <div class="flex border-b border-gray-800 mb-5">
+        <button id="tab-auth-login" onclick="AppModule.toggleAuthTab('login')" class="flex-1 py-2 font-bold text-sm text-purple-300 border-b-2 border-purple-500">
+          Sign in
+        </button>
+        <button id="tab-auth-register" onclick="AppModule.toggleAuthTab('register')" class="flex-1 py-2 font-medium text-sm text-gray-400 border-b-2 border-transparent hover:text-gray-200">
+          Create account
+        </button>
+      </div>
+
+      <!-- Tab 1: Login Form -->
+      <div id="auth-section-login">
+        <form onsubmit="AppModule.handleLoginSubmit(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-1">Email Address</label>
+            <input id="login-email" type="email" placeholder="Email" autocomplete="email" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-1">Password</label>
+            <input id="login-password" type="password" autocomplete="current-password" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+          </div>
+          <button type="submit" class="w-full btn-oracle py-2.5 text-xs font-bold rounded-xl shadow-lg">
+            Sign In to Oracle
+          </button>
+        </form>
+
+      </div>
+
+      <!-- Tab 2: Register Form -->
+      <div id="auth-section-register" class="hidden">
+        <form onsubmit="AppModule.handleRegisterSubmit(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-0.5">Name</label>
+            <input id="reg-name" type="text" placeholder="Adv. Wanjiku Mwangi" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-0.5">Email</label>
+            <input id="reg-email" type="email" autocomplete="email" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-0.5">Password</label>
+            <input id="reg-password" type="password" minlength="8" autocomplete="new-password" placeholder="At least 8 characters" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+          </div>
+          <button type="submit" class="w-full btn-mpesa py-2.5 text-xs font-bold rounded-xl shadow-lg mt-2">
+            Create account
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="password-reset-modal" class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-sm rounded-2xl border border-purple-500/30 p-6">
+      <h2 class="text-lg font-semibold">Set a new password</h2>
+      <p class="mt-2 text-sm text-gray-400">Your administrator issued a temporary password. Choose a new one to continue.</p>
+      <form id="password-reset-form" class="mt-4 space-y-3">
+        <input id="password-reset-current" type="password" autocomplete="current-password" placeholder="Temporary password" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+        <input id="password-reset-new" type="password" minlength="8" autocomplete="new-password" placeholder="New password" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+        <input id="password-reset-confirm" type="password" minlength="8" autocomplete="new-password" placeholder="Confirm new password" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+        <p id="password-reset-message" role="status" class="text-sm text-red-300"></p>
+        <button class="w-full btn-oracle rounded-lg py-2 text-sm font-semibold">Update password</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: M-PESA DARAJA CHECKOUT              -->
+  <!-- ========================================== -->
+  <div id="billing-checkout-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md rounded-3xl border border-white/15 p-6 modal-enter shadow-2xl relative">
+      
+      <button onclick="BillingModule.closeBillingModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-1 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+
+      <!-- Plan details header -->
+      <div class="text-center mb-5">
+        <span class="text-[11px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">
+          Safaricom Lipa na M-Pesa Online
+        </span>
+        <h3 id="checkout-plan-name" class="text-xl font-bold text-white mt-2">Pro Advocate</h3>
+        <div id="checkout-plan-price" class="text-3xl font-extrabold text-emerald-400 mt-1">KES 2,000</div>
+        <div id="checkout-plan-quota" class="text-xs text-gray-400 mt-0.5">200 questions / monthly</div>
+      </div>
+
+      <!-- State 1: Phone input form -->
+      <div id="checkout-form-state" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Safaricom Mobile Number</label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-2.5 text-xs font-bold text-emerald-400">🇰🇪</span>
+            <input id="checkout-mpesa-phone" type="text" placeholder="254712345678" class="w-full bg-gray-900 border border-gray-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white font-mono focus:outline-none focus:border-emerald-500">
+          </div>
+          <p class="text-[11px] text-gray-500 mt-1">Format: 2547XXXXXXXX. An STK push prompt will appear on your phone screen.</p>
+        </div>
+
+        <button onclick="BillingModule.triggerMpesaStkPush()" class="w-full btn-mpesa py-3 text-sm font-bold rounded-xl shadow-lg flex items-center justify-center gap-2">
+          <span>Pay via M-Pesa STK Push</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+          </svg>
+        </button>
+
+        <div class="flex items-center justify-center gap-4 text-xs text-gray-400 pt-2 border-t border-gray-800">
+          <span>M-Pesa is currently the only connected payment method.</span>
+        </div>
+      </div>
+
+      <!-- State 2: Pulsing STK Push Waiting Screen -->
+      <div id="stk-prompt-state" class="hidden text-center py-6 space-y-4">
+        <div class="w-20 h-20 mx-auto rounded-full bg-emerald-950/80 border-2 border-emerald-500 flex items-center justify-center text-3xl stk-phone-pulse">
+          📱
+        </div>
+        <div>
+          <h4 class="text-base font-bold text-white">Check Your Mobile Handset!</h4>
+          <p class="text-xs text-gray-300 mt-1">
+            Prompt sent to <strong id="stk-phone-display" class="text-emerald-400">254712345678</strong> for <span id="stk-amount-display" class="font-bold text-white">KES 2,000</span>.
+          </p>
+          <p class="text-xs text-gray-400 mt-1">Enter your M-Pesa PIN on your phone to complete payment.</p>
+        </div>
+        <div class="text-xs font-mono text-emerald-400">
+          Waiting for callback: <span id="stk-countdown-seconds" class="font-bold">12s</span>
+        </div>
+      </div>
+
+      <!-- State 3: Payment Success & Receipt -->
+      <div id="stk-success-state" class="hidden text-center py-4 space-y-4">
+        <div class="w-16 h-16 mx-auto rounded-full bg-emerald-600/20 text-emerald-400 border border-emerald-500 flex items-center justify-center text-3xl">
+          ✓
+        </div>
+        <div>
+          <h4 class="text-lg font-bold text-white">Payment Confirmed!</h4>
+          <p class="text-xs text-gray-300 mt-1">
+            Your subscription to <span id="success-plan-name" class="font-bold text-purple-300">Pro Advocate</span> is now active.
+          </p>
+          <div class="mt-3 p-3 rounded-xl bg-gray-900 border border-emerald-800/40 text-xs font-mono text-left">
+            <div class="text-gray-400">M-Pesa Receipt: <strong id="success-receipt-code" class="text-emerald-400 font-bold">QHK8492015</strong></div>
+            <div class="text-gray-400 mt-0.5">Status: <span class="text-emerald-400">COMPLETED (HTTP 200 OK)</span></div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="BillingModule.downloadReceipt()" class="flex-1 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-white border border-gray-700">
+            Download payment receipt
+          </button>
+          <button onclick="BillingModule.closeBillingModal(); AppModule.switchTab('chat');" class="flex-1 btn-oracle py-2 text-xs font-bold rounded-xl">
+            Start Researching
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ARTICLE VIEWER SLIDE-OVER DRAWER    -->
+  <!-- ========================================== -->
+  <div id="article-viewer-drawer" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex justify-end">
+    <div class="w-full max-w-xl bg-[#0e1424] border-l border-white/10 h-full p-6 flex flex-col justify-between shadow-2xl modal-enter">
+      
+      <div>
+        <div class="flex items-center justify-between pb-4 border-b border-gray-800">
+          <div>
+            <span id="drawer-article-num" class="px-2.5 py-1 rounded-full text-xs font-bold bg-purple-950 text-purple-300 border border-purple-800">
+              Article 27
+            </span>
+            <h3 id="drawer-article-title" class="text-lg font-bold text-white mt-2">Equality and freedom from discrimination</h3>
+            <p id="drawer-article-chapter" class="text-xs text-gray-400 mt-0.5">Chapter 4: The Bill of Rights</p>
+          </div>
+          <button onclick="ConstitutionBrowser.closeArticleDrawer()" class="text-gray-400 hover:text-white p-2 rounded-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Article Clauses Content -->
+        <div id="drawer-article-content" class="my-4 max-h-[calc(100vh-14rem)] overflow-y-auto pr-2 space-y-3">
+          <!-- Rendered by constitution_browser.js -->
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-gray-800 flex items-center justify-between gap-3">
+        <button id="drawer-ask-ai-btn" class="flex-1 btn-oracle py-2.5 text-xs font-bold rounded-xl shadow-lg">
+          Ask Oracle Analysis on this Provision
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: QUOTA EXCEEDED 402/429 UPGRADE      -->
+  <!-- ========================================== -->
+  <div id="quota-exceeded-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md rounded-3xl border border-purple-500/40 p-6 modal-enter shadow-2xl text-center">
+      <div class="w-14 h-14 mx-auto rounded-full bg-purple-950 text-purple-400 border border-purple-700 flex items-center justify-center text-2xl mb-3">
+        ⚡
+      </div>
+      <h3 class="text-xl font-bold text-white font-['Cinzel']">Constitutional Question Limit Reached</h3>
+      <p id="quota-modal-desc" class="text-xs text-gray-300 mt-2">
+        You have used all 5 free messages in this 8-hour window.
+      </p>
+      
+      <div class="mt-5 space-y-2">
+        <button onclick="ChatModule.closeQuotaModal(); BillingModule.openBillingModal('plan_pro');" class="w-full btn-mpesa py-2.5 text-xs font-bold rounded-xl shadow-lg">
+          Upgrade to Pro Advocate (KES 2,000 / mo)
+        </button>
+        <button onclick="ChatModule.closeQuotaModal()" class="w-full py-2 text-xs font-semibold text-gray-400 hover:text-white">
+          Continue Browsing Public Articles
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: FEEDBACK (ADVOCATE REVIEW)          -->
+  <!-- ========================================== -->
+  <div id="feedback-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md rounded-3xl border border-white/15 p-6 modal-enter shadow-2xl">
+      <h3 id="feedback-modal-title" class="text-base font-bold text-white mb-2">Advocate Review Feedback</h3>
+      <p class="text-xs text-gray-400 mb-4">Your commentary is routed directly to the Kenyan Legal Review Board to tune hybrid retrieval weights.</p>
+      
+      <textarea id="feedback-comment" rows="3" placeholder="Explain the citation discrepancy or why this provision analysis was helpful..." class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 resize-none"></textarea>
+      
+      <div class="flex items-center justify-end gap-3 mt-4">
+        <button onclick="document.getElementById('feedback-modal').classList.add('hidden')" class="px-3 py-1.5 rounded-xl text-xs text-gray-400 hover:text-white">
+          Cancel
+        </button>
+        <button onclick="ChatModule.submitFeedback()" class="btn-oracle px-4 py-1.5 text-xs font-bold rounded-xl">
+          Submit to Legal Board
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: MAKER-CHECKER PAYOUT APPROVAL       -->
+  <!-- ========================================== -->
+  <div id="payout-approval-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md rounded-3xl border border-amber-500/50 p-6 modal-enter shadow-2xl">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-amber-400 text-xl">🛡️</span>
+        <h3 class="text-base font-bold text-white">Dual-Control Checker Authorization</h3>
+      </div>
+      <p class="text-xs text-gray-300">
+        You are approving a disbursement of <strong id="approval-payout-amount" class="text-emerald-400 font-bold">KES 50,000</strong> to <span id="approval-payout-dest" class="text-white">254722000111</span>.
+      </p>
+
+      <div class="my-4 p-3 rounded-xl bg-gray-900 border border-amber-800/40 text-[11px] text-gray-400">
+        Enter the 6-digit Super Admin OTP token generated by your hardware authenticator.
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-gray-300 mb-1">Super Admin OTP (Enter 123456 for demo)</label>
+        <input id="approval-otp-input" type="text" value="123456" placeholder="123456" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 text-sm text-center font-mono tracking-widest text-white focus:outline-none focus:border-amber-500">
+      </div>
+
+      <div class="flex items-center justify-end gap-3 mt-5">
+        <button onclick="AdminModule.closePayoutApprovalModal()" class="px-4 py-2 rounded-xl text-xs text-gray-400 hover:text-white">
+          Cancel
+        </button>
+        <button onclick="AdminModule.confirmMakerCheckerApproval()" class="btn-mpesa px-5 py-2 text-xs font-bold rounded-xl shadow-lg">
+          Sign & Disburse via Daraja
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules in Dependency Sequence -->
+  <script src="js/constitution_data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/constitution_browser.js"></script>
+  <script src="js/billing.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

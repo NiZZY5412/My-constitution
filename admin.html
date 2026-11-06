@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Kenya Legal Oracle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="min-h-screen bg-[#0b0f19] text-gray-100">
+  <header class="border-b border-white/10 glass-panel">
+    <div class="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
+      <a href="/" class="font-bold text-white">Kenya Legal Oracle</a>
+      <div class="flex gap-3 items-center">
+        <a href="/" class="text-sm text-gray-400 hover:text-white">Client</a>
+        <button id="admin-signout" class="hidden text-sm text-gray-400 hover:text-white">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-[1600px] p-4 sm:p-5">
+    <section id="admin-login" class="hidden max-w-sm mx-auto mt-20 glass-panel rounded-2xl p-6">
+      <h1 class="text-xl font-semibold mb-5">Admin sign in</h1>
+      <form id="admin-login-form" class="space-y-3">
+        <input id="admin-email" type="email" placeholder="Email" autocomplete="username" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+        <input id="admin-password" type="password" placeholder="Password" autocomplete="current-password" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+        <button class="w-full btn-oracle rounded-lg py-2 text-sm font-semibold">Sign in</button>
+      </form>
+      <p id="admin-login-message" role="status" class="text-sm text-red-300 mt-3"></p>
+    </section>
+
+    <section id="admin-dashboard" class="hidden">
+      <div class="mb-5 flex items-center justify-between">
+        <div>
+          <h1 id="admin-page-title" class="text-2xl font-semibold">Dashboard</h1>
+        </div>
+        <button id="admin-refresh" class="rounded-lg bg-gray-800 px-3 py-2 text-sm hover:bg-gray-700">Refresh</button>
+      </div>
+      <div class="grid gap-5 lg:grid-cols-[240px_minmax(0,1fr)]">
+        <aside class="glass-panel h-fit rounded-xl p-3 lg:sticky lg:top-4">
+          <nav id="admin-sidebar" aria-label="Admin sections" class="space-y-1">
+            <button data-panel="dashboard" class="admin-nav-item w-full rounded-lg px-3 py-2 text-left text-sm">Dashboard</button>
+            <div class="pt-3">
+              <div class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Users</div>
+              <button data-panel="users" class="admin-nav-item w-full rounded-lg px-3 py-2 text-left text-sm">All users</button>
+            </div>
+            <div class="pt-3">
+              <div class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Operations</div>
+              <button data-panel="payments" class="admin-nav-item w-full rounded-lg px-3 py-2 text-left text-sm">Payments</button>
+              <button data-panel="payouts" class="admin-nav-item w-full rounded-lg px-3 py-2 text-left text-sm">Payouts</button>
+              <button data-panel="support" class="admin-nav-item w-full rounded-lg px-3 py-2 text-left text-sm">Help desk</button>
+              <button data-panel="content" class="admin-nav-item w-full rounded-lg px-3 py-2 text-left text-sm">Content & AI</button>
+              <button data-panel="settings" class="admin-nav-item w-full rounded-lg px-3 py-2 text-left text-sm">System settings</button>
+              <button data-panel="audit" class="admin-nav-item w-full rounded-lg px-3 py-2 text-left text-sm">Audit log</button>
+            </div>
+          </nav>
+        </aside>
+        <div id="admin-panels" class="min-w-0 space-y-5">
+      <section id="admin-panel-dashboard" data-panel-content="dashboard" class="space-y-5">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="glass-panel rounded-xl p-4">
+          <div class="text-sm text-gray-400">Users</div>
+          <div id="admin-total-users" class="text-2xl font-bold mt-1">—</div>
+        </div>
+        <div class="glass-panel rounded-xl p-4">
+          <div class="text-sm text-gray-400">New · 30 days</div>
+          <div id="admin-new-users" class="text-2xl font-bold mt-1">—</div>
+        </div>
+        <div class="glass-panel rounded-xl p-4">
+          <div class="text-sm text-gray-400">Active users</div>
+          <div id="admin-active-users" class="text-2xl font-bold mt-1">—</div>
+        </div>
+        <div class="glass-panel rounded-xl p-4">
+          <div class="text-sm text-gray-400">Free / Paid</div>
+          <div class="text-2xl font-bold mt-1"><span id="admin-free-users">—</span> / <span id="admin-paid-users">—</span></div>
+        </div>
+        <div class="glass-panel rounded-xl p-4">
+          <div class="text-sm text-gray-400">Total collected · KES</div>
+          <div id="admin-total-revenue" class="text-2xl font-bold mt-1">—</div>
+        </div>
+        <div class="glass-panel rounded-xl p-4">
+          <div class="text-sm text-gray-400">Payments pending / failed</div>
+          <div class="text-2xl font-bold mt-1"><span id="admin-pending-payments">—</span> / <span id="admin-failed-payments">—</span></div>
+        </div>
+        <div class="glass-panel rounded-xl p-4">
+          <div class="text-sm text-gray-400">Chat messages</div>
+          <div id="admin-chat-messages" class="text-2xl font-bold mt-1">—</div>
+        </div>
+        <div class="glass-panel rounded-xl p-4">
+          <div class="text-sm text-gray-400">MRR / AI cost</div>
+          <div class="text-sm font-semibold mt-2">Not yet tracked</div>
+        </div>
+      </div>
+      <div class="grid gap-3 md:grid-cols-3">
+        <div class="glass-panel rounded-xl p-4">
+          <h2 class="text-sm font-semibold mb-2">Revenue by day</h2>
+          <ul id="admin-revenue-daily" class="space-y-1 text-xs text-gray-400"></ul>
+        </div>
+        <div class="glass-panel rounded-xl p-4">
+          <h2 class="text-sm font-semibold mb-2">Revenue by month</h2>
+          <ul id="admin-revenue-monthly" class="space-y-1 text-xs text-gray-400"></ul>
+        </div>
+        <div class="glass-panel rounded-xl p-4">
+          <h2 class="text-sm font-semibold mb-2">Revenue by plan</h2>
+          <ul id="admin-revenue-plan" class="space-y-1 text-xs text-gray-400"></ul>
+        </div>
+      </div>
+      </section>
+
+      <section id="admin-panel-users" data-panel-content="users" class="hidden space-y-3">
+        <h2 class="text-lg font-semibold">Users</h2>
+        <div class="flex flex-wrap gap-2">
+          <input id="admin-user-filter" type="search" placeholder="Search name or email" class="w-full max-w-sm bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+          <select id="admin-user-view" aria-label="User group" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+            <option value="">All users</option>
+            <option value="active">Active</option>
+            <option value="paid">Paid</option>
+            <option value="free">Free</option>
+            <option value="suspended">Suspended</option>
+            <option value="deleted">Deleted</option>
+          </select>
+          <select id="admin-plan-filter" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+            <option value="">All plans</option>
+            <option value="plan_free">Free</option>
+            <option value="plan_pro">Pro Advocate</option>
+            <option value="plan_firm_starter">Firm Starter</option>
+            <option value="plan_firm_business">Firm Business</option>
+          </select>
+        </div>
+        <div id="admin-message" role="status" class="text-sm"></div>
+        <div class="glass-panel rounded-xl overflow-x-auto">
+          <table class="w-full text-left text-sm min-w-[900px]">
+            <thead class="bg-gray-900 text-xs uppercase text-gray-400">
+              <tr>
+                <th class="p-3">User</th>
+                <th class="p-3">Plan / expiry</th>
+                <th class="p-3">Usage</th>
+                <th class="p-3">Status</th>
+                <th class="p-3">Controls</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="admin-panel-payments" data-panel-content="payments" class="hidden space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-semibold">Transactions</h2>
+          <button id="admin-export-payments" class="rounded-lg bg-gray-800 px-3 py-2 text-sm hover:bg-gray-700">Export CSV</button>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <select id="admin-payment-status" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+            <option value="">All statuses</option><option value="pending">Pending</option>
+            <option value="success">Paid</option><option value="failed">Failed</option><option value="review">Review</option>
+          </select>
+          <select id="admin-payment-method" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+            <option value="">All methods</option><option value="mpesa">M-Pesa</option>
+          </select>
+          <input id="admin-payment-from" type="date" aria-label="Payments from date" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+          <input id="admin-payment-to" type="date" aria-label="Payments through date" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+          <button id="admin-filter-payments" class="rounded-lg bg-gray-800 px-3 py-2 text-sm hover:bg-gray-700">Filter</button>
+        </div>
+        <div class="glass-panel rounded-xl overflow-x-auto">
+          <table class="w-full text-left text-sm min-w-[800px]">
+            <thead class="bg-gray-900 text-xs uppercase text-gray-400"><tr>
+              <th class="p-3">Date</th><th class="p-3">User</th><th class="p-3">Plan</th>
+              <th class="p-3">Amount</th><th class="p-3">Phone / receipt</th><th class="p-3">Status</th>
+            </tr></thead>
+            <tbody id="admin-payments" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="admin-panel-payouts" data-panel-content="payouts" class="hidden space-y-3">
+        <h2 class="text-lg font-semibold">Payouts</h2>
+        <div id="admin-payout-warning" class="rounded-xl border border-amber-500/30 bg-amber-950/30 p-4 text-sm text-amber-200">
+          Real transfers are disabled until production provider credentials, verified available-balance reconciliation, and a second-admin approval / 2FA flow are configured.
+        </div>
+        <form id="admin-payout-form" class="flex flex-wrap gap-2">
+          <input name="amount_kes" type="number" min="1" max="100000" required placeholder="Amount KES" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+          <select name="method" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm"><option value="mpesa">M-Pesa request</option><option value="bank">Bank</option></select>
+          <input name="beneficiary" required placeholder="Beneficiary / phone" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+          <button class="rounded-lg bg-gray-800 px-3 py-2 text-sm hover:bg-gray-700">Record request only</button>
+        </form>
+        <p id="admin-payout-message" role="status" class="text-sm text-gray-400"></p>
+        <ul id="admin-payouts" class="space-y-2 text-sm text-gray-400"></ul>
+      </section>
+
+      <section id="admin-panel-support" data-panel-content="support" class="hidden space-y-3">
+        <h2 class="text-lg font-semibold">Help desk</h2>
+        <p class="text-sm text-amber-200">Inbox is ready for ticket records. User ticket submission and email notifications are not configured yet.</p>
+        <ul id="admin-tickets" class="space-y-2 text-sm text-gray-400"></ul>
+      </section>
+
+      <section id="admin-panel-content" data-panel-content="content" class="hidden space-y-3">
+        <h2 class="text-lg font-semibold">Content, AI and system controls</h2>
+        <div class="rounded-xl border border-white/10 bg-gray-900/60 p-4 text-sm text-gray-300">
+          Article dataset and retrieval are connected to the backend. Upload/re-index, prompt and disclaimer editing, feedback review, staff roles, 2FA, IP allowlists, announcements, and feature-flag enforcement need their provider/workflow integrations before these controls can safely take effect.
+        </div>
+      </section>
+
+      <section id="admin-panel-settings" data-panel-content="settings" class="hidden space-y-3">
+        <h2 class="text-lg font-semibold">System settings</h2>
+        <div class="rounded-xl border border-white/10 bg-gray-900/60 p-4 text-sm text-gray-300">
+          Staff roles, two-factor authentication, IP allowlists, announcements, and editable feature flags are not connected yet.
+        </div>
+      </section>
+
+      <section id="admin-panel-audit" data-panel-content="audit" class="hidden">
+        <h2 class="text-lg font-semibold mb-3">Recent changes</h2>
+        <ul id="admin-audit" class="space-y-2 text-sm text-gray-400"></ul>
+      </section>
+        </div>
+      </div>
+    </section>
+
+    <section id="admin-denied" class="hidden max-w-md mx-auto mt-20 glass-panel rounded-2xl p-6 text-center">
+      <h1 class="text-xl font-semibold">Admin access required</h1>
+      <p class="text-sm text-gray-400 mt-2">Sign in with a super admin account.</p>
+      <button id="admin-denied-signout" class="mt-4 text-sm text-purple-300 hover:text-white">Sign out</button>
+    </section>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
